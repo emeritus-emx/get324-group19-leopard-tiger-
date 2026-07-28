@@ -132,21 +132,20 @@ def main() -> None:
 
     MINIMUM_CONFIDENCE = 0.80
 
-if confidence < MINIMUM_CONFIDENCE:
-    st.warning(
-        "Image not recognized. Please upload a clear photograph "
-        "containing only a leopard or tiger."
-    )
-    st.metric("Highest model score", f"{confidence * 100:.2f}%")
-    st.caption(
-        "The model could not identify the image with sufficient confidence."
-    )
-    return
+    if confidence < MINIMUM_CONFIDENCE:
+        st.warning(
+            "Image not recognized. Please upload a clear photograph "
+            "containing only a leopard or tiger."
+        )
+        st.metric("Highest model score", f"{confidence * 100:.2f}%")
+        st.caption(
+            "The model could not identify the image with sufficient confidence."
+        )
+        return
 
-st.success(f"Prediction: {label.title()}")
-st.metric("Model confidence", f"{confidence * 100:.2f}%")
-st.progress(int(round(confidence * 100)))
-
+    st.success(f"Prediction: {label.title()}")
+    st.metric("Model confidence", f"{confidence * 100:.2f}%")
+    st.progress(int(round(confidence * 100)))
     leopard_probability = 1.0 - tiger_probability
     st.write(
         {
