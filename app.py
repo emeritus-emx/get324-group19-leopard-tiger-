@@ -1,8 +1,4 @@
-"""GET 324 Group 19 Streamlit application.
-
-The application loads the model trained in the accompanying Google Colab
-notebook and classifies one uploaded image as a leopard or a tiger.
-"""
+"""GET 324 Group 19 Leopard versus Tiger Streamlit application."""
 
 from __future__ import annotations
 
@@ -23,30 +19,195 @@ DEFAULT_CONFIG = {
     "class_names": ["leopard", "tiger"],
     "image_size": [224, 224],
     "threshold": 0.5,
+    "minimum_confidence": 0.80,
 }
 
 
+def inject_styles() -> None:
+    """Apply the project's wildlife-inspired visual design."""
+    st.markdown(
+        """
+        <style>
+        :root {
+            --forest: #10231b;
+            --forest-soft: #1b382b;
+            --cream: #fff8e8;
+            --amber: #f5b544;
+            --rust: #c96c3b;
+            --muted: #65736b;
+        }
+
+        .stApp {
+            background:
+                radial-gradient(circle at 85% 8%, rgba(245,181,68,.14), transparent 26rem),
+                linear-gradient(180deg, #f9f5e9 0%, #fffdf7 55%, #eef3ed 100%);
+        }
+
+        .block-container {
+            max-width: 1050px;
+            padding-top: 2rem;
+            padding-bottom: 3rem;
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: 2.5rem;
+            border-radius: 26px;
+            color: var(--cream);
+            background:
+                linear-gradient(125deg, rgba(9,25,18,.97), rgba(27,56,43,.94)),
+                repeating-linear-gradient(45deg, transparent 0 20px, rgba(255,255,255,.02) 20px 22px);
+            box-shadow: 0 20px 55px rgba(16,35,27,.18);
+            margin-bottom: 1.3rem;
+        }
+
+        .hero::after {
+            content: "🐆";
+            position: absolute;
+            right: 2rem;
+            bottom: -1.6rem;
+            font-size: 8.5rem;
+            opacity: .18;
+            transform: rotate(-7deg);
+        }
+
+        .eyebrow {
+            color: var(--amber);
+            font-size: .78rem;
+            font-weight: 800;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            color: #fffaf0;
+            font-size: clamp(2rem, 6vw, 4.2rem);
+            line-height: .98;
+            margin: .65rem 0 1rem;
+            max-width: 720px;
+        }
+
+        .hero p {
+            color: #dce7df;
+            max-width: 650px;
+            font-size: 1.05rem;
+            margin-bottom: 0;
+        }
+
+        .status-row {
+            display: flex;
+            gap: .6rem;
+            flex-wrap: wrap;
+            margin-top: 1.4rem;
+        }
+
+        .status-pill {
+            border: 1px solid rgba(255,255,255,.18);
+            background: rgba(255,255,255,.08);
+            border-radius: 999px;
+            padding: .42rem .78rem;
+            color: #edf4ef;
+            font-size: .82rem;
+        }
+
+        div[data-testid="stFileUploader"] {
+            background: rgba(255,255,255,.82);
+            border: 1px solid rgba(16,35,27,.10);
+            border-radius: 20px;
+            padding: 1.1rem;
+            box-shadow: 0 12px 35px rgba(16,35,27,.07);
+        }
+
+        div.stButton > button {
+            min-height: 3.2rem;
+            border: 0;
+            border-radius: 14px;
+            color: #14251c;
+            font-weight: 800;
+            background: linear-gradient(90deg, #f7c45d, #ee9e38);
+            box-shadow: 0 10px 24px rgba(201,108,59,.20);
+        }
+
+        div.stButton > button:hover {
+            color: #14251c;
+            border: 0;
+            transform: translateY(-1px);
+        }
+
+        .result-card {
+            padding: 1.35rem 1.45rem;
+            border-radius: 18px;
+            background: #10231b;
+            color: white;
+            box-shadow: 0 14px 36px rgba(16,35,27,.15);
+        }
+
+        .result-card .label {
+            color: #f5b544;
+            font-size: .78rem;
+            font-weight: 800;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+
+        .result-card .animal {
+            font-size: 2.25rem;
+            font-weight: 850;
+            margin: .25rem 0;
+        }
+
+        .result-card .score {
+            color: #dce7df;
+            font-size: 1rem;
+        }
+
+        .prob-card {
+            padding: 1rem 1.1rem;
+            border-radius: 16px;
+            background: rgba(255,255,255,.78);
+            border: 1px solid rgba(16,35,27,.10);
+        }
+
+        [data-testid="stSidebar"] {
+            background: #10231b;
+        }
+
+        [data-testid="stSidebar"] * {
+            color: #f6f3e8;
+        }
+
+        [data-testid="stSidebar"] hr {
+            border-color: rgba(255,255,255,.12);
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def load_config() -> dict:
-    """Load model metadata, using safe defaults if the file is unavailable."""
+    """Load the settings produced by the Colab notebook."""
     if not CONFIG_PATH.exists():
         return DEFAULT_CONFIG.copy()
 
     with CONFIG_PATH.open("r", encoding="utf-8") as file:
         config = json.load(file)
 
-    required_keys = {"class_names", "image_size", "threshold"}
-    if not required_keys.issubset(config):
+    required = {"class_names", "image_size", "threshold"}
+    if not required.issubset(config):
         raise ValueError(
             "model_info.json must contain class_names, image_size and threshold."
         )
     if config["class_names"] != ["leopard", "tiger"]:
-        raise ValueError("The expected class order is ['leopard', 'tiger'].")
+        raise ValueError("Expected class order: ['leopard', 'tiger'].")
+    config.setdefault("minimum_confidence", 0.80)
     return config
 
 
-@st.cache_resource(show_spinner="Loading the trained model...")
+@st.cache_resource(show_spinner="Preparing the wildlife model...")
 def load_trained_model(model_path: str) -> tf.keras.Model:
-    """Load the saved Keras model once and reuse it across Streamlit reruns."""
+    """Load the trained model once for reuse across app reruns."""
     return tf.keras.models.load_model(model_path, compile=False)
 
 
@@ -55,9 +216,8 @@ def predict_image(
     image: Image.Image,
     config: dict,
 ) -> tuple[str, float, float]:
-    """Prepare an image, run inference and return the prediction details."""
-    image_size = tuple(config["image_size"])
-    batch = prepare_image(image, image_size)
+    """Run one image through the trained binary classifier."""
+    batch = prepare_image(image, tuple(config["image_size"]))
     tiger_probability = float(model.predict(batch, verbose=0).reshape(-1)[0])
     label, confidence = interpret_probability(
         tiger_probability,
@@ -67,40 +227,78 @@ def predict_image(
     return label, confidence, tiger_probability
 
 
+def render_sidebar() -> None:
+    """Display concise project and usage information."""
+    with st.sidebar:
+        st.markdown("## 🐾 Field Guide")
+        st.caption("GET 324 · Laboratory Exercise 10")
+        st.markdown("**Group:** 19")
+        st.markdown("**Task:** Leopard versus Tiger")
+        st.markdown("**Model:** MobileNetV3Small")
+        st.markdown("**Input:** RGB image, 224 × 224")
+        st.divider()
+        st.markdown("### Best image")
+        st.write("• One visible animal")
+        st.write("• Clear daylight")
+        st.write("• Minimal obstruction")
+        st.write("• JPG, PNG or WEBP")
+        st.divider()
+        st.caption(
+            "This is a binary teaching model. It is not a wildlife safety or "
+            "species-verification system."
+        )
+
+
 def main() -> None:
     st.set_page_config(
-        page_title="Leopard or Tiger Classifier",
+        page_title="WildSpot · Leopard or Tiger",
         page_icon="🐆",
-        layout="centered",
+        layout="wide",
+    )
+    inject_styles()
+    render_sidebar()
+
+    st.markdown(
+        """
+        <section class="hero">
+            <div class="eyebrow">Group 19 · Wildlife Vision Lab</div>
+            <h1>Leopard or Tiger?</h1>
+            <p>
+                Upload a clear wildlife photograph and let the trained vision
+                model compare the coat pattern, colour and visible form.
+            </p>
+            <div class="status-row">
+                <span class="status-pill">MobileNetV3Small</span>
+                <span class="status-pill">Binary classification</span>
+                <span class="status-pill">Confidence aware</span>
+            </div>
+        </section>
+        """,
+        unsafe_allow_html=True,
     )
 
-    st.title("Leopard or Tiger?")
-    st.caption("GET 324 Laboratory Exercise 10 · Group 19")
-    st.write(
-        "Upload a clear photograph of one animal. The trained model will classify "
-        "the image as a leopard or a tiger and display its confidence score."
-    )
-
-    with st.expander("How the classifier works"):
+    intro_left, intro_right = st.columns([1.35, 1], gap="large")
+    with intro_left:
+        st.subheader("Upload observation")
+        uploaded_file = st.file_uploader(
+            "Choose one wildlife image",
+            type=["jpg", "jpeg", "png", "webp"],
+            help="Upload a clear image containing one leopard or tiger.",
+            label_visibility="collapsed",
+        )
+    with intro_right:
+        st.subheader("Before you analyse")
         st.write(
-            "The project uses MobileNetV3Small transfer learning. The convolutional "
-            "base extracts visual features, while a binary classification layer "
-            "produces the probability used for the final prediction."
+            "The model knows only leopard and tiger. A photograph containing "
+            "another animal or object may still receive one of those labels."
         )
-        st.info(
-            "Confidence is the model's score, not a guarantee. Images containing "
-            "other animals, drawings, heavy obstruction or unusual angles may be "
-            "classified incorrectly."
+        st.caption(
+            "Low-confidence results are marked uncertain, but high confidence "
+            "does not prove that the uploaded image belongs to a supported class."
         )
-
-    uploaded_file = st.file_uploader(
-        "Choose a leopard or tiger image",
-        type=["jpg", "jpeg", "png", "webp"],
-        help="Use a clear colour image in JPG, JPEG, PNG or WEBP format.",
-    )
 
     if uploaded_file is None:
-        st.info("Upload an image to begin.")
+        st.info("Your uploaded image and analysis will appear here.")
         return
 
     try:
@@ -110,19 +308,36 @@ def main() -> None:
         st.error(f"The uploaded file could not be opened as an image: {error}")
         return
 
-    st.image(image, caption="Uploaded image", use_container_width=True)
+    image_column, action_column = st.columns([1.25, 1], gap="large")
+    with image_column:
+        st.image(image, caption="Selected wildlife image", use_container_width=True)
+    with action_column:
+        st.markdown("### Ready for analysis")
+        st.write(
+            "Press the button once. The model will resize the image, extract "
+            "visual features and calculate both class probabilities."
+        )
+        analyse = st.button(
+            "Run Wildlife Analysis",
+            type="primary",
+            use_container_width=True,
+        )
+
+    if not analyse:
+        st.caption("No prediction has been made yet.")
+        return
 
     if not MODEL_PATH.exists():
         st.error(
-            "The trained model file is missing. Run the Colab notebook, download "
-            "`leopard_tiger_model.keras`, and place it beside `app.py`."
+            "The trained model file is missing. Run the Colab notebook and put "
+            "leopard_tiger_model.keras beside app.py."
         )
         return
 
     try:
         config = load_config()
         model = load_trained_model(str(MODEL_PATH))
-        with st.spinner("Analysing the image..."):
+        with st.spinner("Examining visual patterns..."):
             label, confidence, tiger_probability = predict_image(
                 model, image, config
             )
@@ -130,29 +345,69 @@ def main() -> None:
         st.exception(error)
         return
 
-    MINIMUM_CONFIDENCE = 0.80
+    leopard_probability = 1.0 - tiger_probability
+    minimum_confidence = float(config.get("minimum_confidence", 0.80))
 
-    if confidence < MINIMUM_CONFIDENCE:
+    st.divider()
+    st.subheader("Analysis result")
+
+    if confidence < minimum_confidence:
         st.warning(
-            "Image not recognized. Please upload a clear photograph "
-            "containing only a leopard or tiger."
+            "Uncertain observation. Upload a clearer and closer photograph "
+            "containing one leopard or tiger."
         )
         st.metric("Highest model score", f"{confidence * 100:.2f}%")
-        st.caption(
-            "The model could not identify the image with sufficient confidence."
+    else:
+        icon = "🐆" if label == "leopard" else "🐅"
+        st.markdown(
+            f"""
+            <div class="result-card">
+                <div class="label">Predicted animal</div>
+                <div class="animal">{icon} {label.title()}</div>
+                <div class="score">Model confidence: {confidence * 100:.2f}%</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
-        return
 
-    st.success(f"Prediction: {label.title()}")
-    st.metric("Model confidence", f"{confidence * 100:.2f}%")
-    st.progress(int(round(confidence * 100)))
-    leopard_probability = 1.0 - tiger_probability
-    st.write(
-        {
-            "Leopard probability": f"{leopard_probability * 100:.2f}%",
-            "Tiger probability": f"{tiger_probability * 100:.2f}%",
-        }
-    )
+    st.write("")
+    leopard_column, tiger_column = st.columns(2, gap="medium")
+    with leopard_column:
+        st.markdown(
+            f"""
+            <div class="prob-card">
+                <b>🐆 Leopard probability</b><br>
+                <span style="font-size:1.65rem;font-weight:800;">
+                    {leopard_probability * 100:.2f}%
+                </span>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.progress(int(round(leopard_probability * 100)))
+    with tiger_column:
+        st.markdown(
+            f"""
+            <div class="prob-card">
+                <b>🐅 Tiger probability</b><br>
+                <span style="font-size:1.65rem;font-weight:800;">
+                    {tiger_probability * 100:.2f}%
+                </span>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.progress(int(round(tiger_probability * 100)))
+
+    with st.expander("Interpret this result"):
+        st.write(
+            "The displayed confidence is the model's preference between its "
+            "two learned classes. It is not a biological identification guarantee."
+        )
+        st.write(
+            f"The class decision threshold is {float(config['threshold']):.2f}, "
+            f"and the uncertainty display level is {minimum_confidence:.2f}."
+        )
 
 
 if __name__ == "__main__":
