@@ -111,6 +111,56 @@ def inject_styles() -> None:
             font-size: .82rem;
         }
 
+        .control-card,
+        .result-card,
+        .prob-card,
+        .result-summary {
+            padding: 1.4rem 1.5rem;
+            border-radius: 20px;
+            background: rgba(255,255,255,.92);
+            border: 1px solid rgba(16,35,27,.10);
+            box-shadow: 0 18px 40px rgba(16,35,27,.08);
+            margin-bottom: 1rem;
+        }
+
+        .result-summary {
+            display: grid;
+            gap: .65rem;
+        }
+
+        .detail-text {
+            color: #375141;
+            opacity: .86;
+            margin-top: .3rem;
+            font-size: .92rem;
+        }
+
+        .detail-value {
+            color: #10231b;
+            font-size: 1.85rem;
+            font-weight: 800;
+            margin-top: .25rem;
+        }
+
+        .summary-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 5.5rem;
+            padding: .6rem 1rem;
+            border-radius: 999px;
+            font-weight: 800;
+            color: #10231b;
+        }
+
+        .summary-badge.leopard {
+            background: #f5b544;
+        }
+
+        .summary-badge.tiger {
+            background: #ef8b48;
+        }
+
         div[data-testid="stFileUploader"] {
             background: rgba(255,255,255,.82);
             border: 1px solid rgba(16,35,27,.10);
@@ -227,8 +277,8 @@ def predict_image(
     return label, confidence, tiger_probability
 
 
-def render_sidebar() -> None:
-    """Display concise project and usage information."""
+def render_sidebar(config: dict) -> tuple[float, float, bool]:
+    """Display project info and interactive analysis controls."""
     with st.sidebar:
         st.markdown("## 🐾 Field Guide")
         st.caption("GET 324 · Laboratory Exercise 10")
@@ -242,11 +292,44 @@ def render_sidebar() -> None:
         st.write("• Clear daylight")
         st.write("• Minimal obstruction")
         st.write("• JPG, PNG or WEBP")
+
         st.divider()
-        st.caption(
-            "This is a binary teaching model. It is not a wildlife safety or "
-            "species-verification system."
+        st.markdown("### Analysis controls")
+        decision_threshold = st.slider(
+            "Decision threshold",
+            min_value=0.20,
+            max_value=0.80,
+            value=min(max(float(config.get("threshold", 0.50)), 0.20), 0.80),
+            step=0.01,
+            help=(
+                "Adjust the decision boundary used to classify leopard vs tiger. "
+                "A higher threshold makes tiger predictions more conservative."
+            ),
         )
+        minimum_confidence = st.slider(
+            "Uncertainty confidence",
+            min_value=0.50,
+            max_value=0.95,
+            value=float(config.get("minimum_confidence", 0.80)),
+            step=0.01,
+            help=(
+                "Raise this slider to require stronger model confidence before "
+                "the app reports a definitive result."
+            ),
+        )
+        show_raw_scores = st.checkbox(
+            "Show raw model scores",
+            value=False,
+            help="Reveal the underlying tiger and leopard probability values.",
+        )
+
+        st.divider()
+        st.markdown("### Model notes")
+        st.caption(
+            "The model is trained only for leopard and tiger. Unsupported images "
+            "can still receive one of those labels with high confidence."
+        )
+    return decision_threshold, minimum_confidence, show_raw_scores
 
 
 def main() -> None:
@@ -256,7 +339,14 @@ def main() -> None:
         layout="wide",
     )
     inject_styles()
-    render_sidebar()
+
+    try:
+        config = load_config()
+    except Exception as error:
+        st.error(f"Configuration error: {error}")
+        return
+
+    decision_threshold, minimum_confidence, show_raw_scores = render_sidebar(config)
 
     st.markdown(
         """
@@ -286,19 +376,24 @@ def main() -> None:
             help="Upload a clear image containing one leopard or tiger.",
             label_visibility="collapsed",
         )
+
     with intro_right:
-        st.subheader("Before you analyse")
+        st.subheader("Analysis review")
         st.write(
-            "The model knows only leopard and tiger. A photograph containing "
-            "another animal or object may still receive one of those labels."
+            "This app distinguishes only leopards and tigers. If your image "
+            "contains another animal, the model will still choose its closest match."
+        )
+        st.markdown(
+            f"**Decision threshold:** {decision_threshold:.2f}  \\"
+            f"**Confidence threshold:** {minimum_confidence:.2f}"
         )
         st.caption(
-            "Low-confidence results are marked uncertain, but high confidence "
-            "does not prove that the uploaded image belongs to a supported class."
+            "Use the sidebar sliders to explore how stricter or looser criteria "
+            "affect the final classification."
         )
 
     if uploaded_file is None:
-        st.info("Your uploaded image and analysis will appear here.")
+        st.info("Upload an image to preview it and enable the analysis button.")
         return
 
     try:
@@ -311,17 +406,20 @@ def main() -> None:
     image_column, action_column = st.columns([1.25, 1], gap="large")
     with image_column:
         st.image(image, caption="Selected wildlife image", use_container_width=True)
+
     with action_column:
         st.markdown("### Ready for analysis")
         st.write(
             "Press the button once. The model will resize the image, extract "
-            "visual features and calculate both class probabilities."
+            "visual features and calculate predicted probabilities."
         )
         analyse = st.button(
             "Run Wildlife Analysis",
             type="primary",
             use_container_width=True,
         )
+        if st.button("Reset page", type="secondary", use_container_width=True):
+            st.experimental_rerun()
 
     if not analyse:
         st.caption("No prediction has been made yet.")
@@ -335,78 +433,92 @@ def main() -> None:
         return
 
     try:
-        config = load_config()
         model = load_trained_model(str(MODEL_PATH))
+        display_config = config.copy()
+        display_config["threshold"] = decision_threshold
         with st.spinner("Examining visual patterns..."):
             label, confidence, tiger_probability = predict_image(
-                model, image, config
+                model, image, display_config
             )
     except Exception as error:
         st.exception(error)
         return
 
     leopard_probability = 1.0 - tiger_probability
-    minimum_confidence = float(config.get("minimum_confidence", 0.80))
 
     st.divider()
     st.subheader("Analysis result")
 
-    if confidence < minimum_confidence:
-        st.warning(
-            "Uncertain observation. Upload a clearer and closer photograph "
-            "containing one leopard or tiger."
-        )
-        st.metric("Highest model score", f"{confidence * 100:.2f}%")
-    else:
-        icon = "🐆" if label == "leopard" else "🐅"
+    result_section, details_section = st.columns([1.1, 0.9], gap="large")
+    with result_section:
+        if confidence < minimum_confidence:
+            st.warning(
+                "Uncertain observation. Upload a clearer and closer photograph "
+                "containing one leopard or tiger."
+            )
+            st.metric("Highest model score", f"{confidence * 100:.2f}%")
+        else:
+            icon = "🐆" if label == "leopard" else "🐅"
+            st.markdown(
+                f"""
+                <div class="result-card">
+                    <div class="label">Predicted animal</div>
+                    <div class="animal">{icon} {label.title()}</div>
+                    <div class="score">Model confidence: {confidence * 100:.2f}%</div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
         st.markdown(
             f"""
-            <div class="result-card">
-                <div class="label">Predicted animal</div>
-                <div class="animal">{icon} {label.title()}</div>
-                <div class="score">Model confidence: {confidence * 100:.2f}%</div>
+            <div class="prob-card">
+                <b>Model decision</b><br>
+                <span class="detail-text">Threshold</span>
+                <div class="detail-value">{decision_threshold:.2f}</div>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-    st.write("")
-    leopard_column, tiger_column = st.columns(2, gap="medium")
-    with leopard_column:
+    with details_section:
         st.markdown(
             f"""
-            <div class="prob-card">
-                <b>🐆 Leopard probability</b><br>
-                <span style="font-size:1.65rem;font-weight:800;">
-                    {leopard_probability * 100:.2f}%
-                </span>
+            <div class="result-summary">
+                <div><strong>Tiger probability</strong></div>
+                <div class="summary-badge tiger">{tiger_probability * 100:.2f}%</div>
+                <div class="detail-text">Raw sigmoid output from the model.</div>
             </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        st.progress(int(round(leopard_probability * 100)))
-    with tiger_column:
-        st.markdown(
-            f"""
-            <div class="prob-card">
-                <b>🐅 Tiger probability</b><br>
-                <span style="font-size:1.65rem;font-weight:800;">
-                    {tiger_probability * 100:.2f}%
-                </span>
+            <div class="result-summary">
+                <div><strong>Leopard probability</strong></div>
+                <div class="summary-badge leopard">{leopard_probability * 100:.2f}%</div>
+                <div class="detail-text">Complementary probability value.</div>
             </div>
             """,
             unsafe_allow_html=True,
         )
         st.progress(int(round(tiger_probability * 100)))
+        st.progress(int(round(leopard_probability * 100)))
+
+    if show_raw_scores:
+        with st.expander("Raw model scores and thresholds", expanded=True):
+            st.write(
+                "Tiger probability is the raw model output. The app uses the "
+                "decision threshold to convert it to a class label and the "
+                "uncertainty confidence level to mark low-confidence images."
+            )
+            st.metric("Tiger raw score", f"{tiger_probability * 100:.2f}%")
+            st.metric("Leopard raw score", f"{leopard_probability * 100:.2f}%")
+            st.write(f"Configured minimum confidence: {minimum_confidence:.2f}")
 
     with st.expander("Interpret this result"):
         st.write(
-            "The displayed confidence is the model's preference between its "
-            "two learned classes. It is not a biological identification guarantee."
+            "The displayed confidence is the model's measured preference between "
+            "its two learned classes. It is not a biological identification guarantee."
         )
         st.write(
-            f"The class decision threshold is {float(config['threshold']):.2f}, "
-            f"and the uncertainty display level is {minimum_confidence:.2f}."
+            f"The app is currently using a decision threshold of {decision_threshold:.2f} "
+            f"and an uncertainty cutoff of {minimum_confidence:.2f}."
         )
 
 
