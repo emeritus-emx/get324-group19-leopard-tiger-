@@ -53,24 +53,25 @@ def inject_styles() -> None:
         .hero {
             position: relative;
             overflow: hidden;
-            padding: 2.5rem;
-            border-radius: 26px;
+            padding: 2.6rem 2.8rem;
+            border-radius: 28px;
             color: var(--cream);
             background:
-                linear-gradient(125deg, rgba(9,25,18,.97), rgba(27,56,43,.94)),
-                repeating-linear-gradient(45deg, transparent 0 20px, rgba(255,255,255,.02) 20px 22px);
-            box-shadow: 0 20px 55px rgba(16,35,27,.18);
+                linear-gradient(125deg, rgba(9,25,18,.98), rgba(20,51,37,.95)),
+                repeating-linear-gradient(45deg, transparent 0 20px, rgba(255,255,255,.03) 20px 22px);
+            box-shadow: 0 22px 55px rgba(16,35,27,.22);
             margin-bottom: 1.3rem;
+            border: 1px solid rgba(245,181,68,.18);
         }
 
         .hero::after {
             content: "🐆";
             position: absolute;
-            right: 2rem;
-            bottom: -1.6rem;
-            font-size: 8.5rem;
-            opacity: .18;
-            transform: rotate(-7deg);
+            right: 1.6rem;
+            bottom: -1.2rem;
+            font-size: 8.8rem;
+            opacity: .16;
+            transform: rotate(-8deg);
         }
 
         .eyebrow {
@@ -105,11 +106,12 @@ def inject_styles() -> None:
 
         .status-pill {
             border: 1px solid rgba(255,255,255,.18);
-            background: rgba(255,255,255,.08);
+            background: rgba(245,181,68,.14);
             border-radius: 999px;
-            padding: .42rem .78rem;
-            color: #edf4ef;
+            padding: .46rem .82rem;
+            color: #fdf5e0;
             font-size: .82rem;
+            font-weight: 700;
         }
 
         .stApp .stMarkdownContainer,
@@ -138,10 +140,10 @@ def inject_styles() -> None:
         .prob-card,
         .result-summary {
             padding: 1.4rem 1.5rem;
-            border-radius: 20px;
-            background: rgba(255,255,255,.92);
+            border-radius: 22px;
+            background: rgba(255,255,255,.94);
             border: 1px solid rgba(16,35,27,.10);
-            box-shadow: 0 18px 40px rgba(16,35,27,.08);
+            box-shadow: 0 16px 36px rgba(16,35,27,.10);
             margin-bottom: 1rem;
         }
 
@@ -184,11 +186,11 @@ def inject_styles() -> None:
         }
 
         div[data-testid="stFileUploader"] {
-            background: rgba(255,255,255,.82);
-            border: 1px solid rgba(16,35,27,.10);
+            background: rgba(255,255,255,.9);
+            border: 1px solid rgba(16,35,27,.12);
             border-radius: 20px;
             padding: 1.1rem;
-            box-shadow: 0 12px 35px rgba(16,35,27,.07);
+            box-shadow: 0 14px 36px rgba(16,35,27,.08);
         }
 
         div.stButton > button {
@@ -198,7 +200,8 @@ def inject_styles() -> None:
             color: #14251c;
             font-weight: 800;
             background: linear-gradient(90deg, #f7c45d, #ee9e38);
-            box-shadow: 0 10px 24px rgba(201,108,59,.20);
+            box-shadow: 0 10px 24px rgba(201,108,59,.22);
+            transition: transform 120ms ease, box-shadow 120ms ease;
         }
 
         div.stButton > button:hover {
@@ -209,10 +212,11 @@ def inject_styles() -> None:
 
         .result-card {
             padding: 1.35rem 1.45rem;
-            border-radius: 18px;
-            background: #10231b;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #10231b 0%, #1b382b 100%);
             color: white;
-            box-shadow: 0 14px 36px rgba(16,35,27,.15);
+            box-shadow: 0 16px 36px rgba(16,35,27,.18);
+            border: 1px solid rgba(245,181,68,.22);
         }
 
         .result-card .label {
@@ -242,7 +246,8 @@ def inject_styles() -> None:
         }
 
         [data-testid="stSidebar"] {
-            background: #10231b;
+            background: linear-gradient(180deg, #10231b 0%, #173626 100%);
+            border-right: 1px solid rgba(245,181,68,.16);
         }
 
         [data-testid="stSidebar"] * {
