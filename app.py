@@ -206,7 +206,7 @@ def inject_styles() -> None:
             opacity: 0.92;
             transform: translateY(-2px);
             pointer-events: none;
-            color: var(--amber);
+            color: white;
             background: transparent;
         }
 
