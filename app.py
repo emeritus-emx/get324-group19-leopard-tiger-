@@ -195,7 +195,7 @@ def inject_styles() -> None:
 
         div[data-testid="stFileUploader"] > div,
         div[data-testid="stFileUploader"] section {
-            background-color: transparent !important;
+            background-color: #c0ac87 !important;
         }
 
         /* Custom uploader icon and clearer visual affordance */
