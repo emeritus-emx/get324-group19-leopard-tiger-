@@ -504,9 +504,10 @@ def main() -> None:
 
     with intro_right:
         st.subheader("Analysis review")
-        st.write(
-            "This app distinguishes only leopards and tigers. If your image "
-            "contains another animal, the model will still choose its closest match."
+        st.markdown(
+            "<span style=\"color: #000000;\">This app distinguishes only leopards and tigers. "
+            "If your image contains another animal, the model will still choose its closest match.</span>",
+            unsafe_allow_html=True,
         )
         st.markdown(
             f"**Decision threshold:** {decision_threshold:.2f}  \\"
