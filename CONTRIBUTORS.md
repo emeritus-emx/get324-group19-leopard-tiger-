@@ -1,11 +1,15 @@
-# Group 19 Contributors
+# GET 324 Group 19 Contributors
 
-Replace every placeholder before submission. Only list members who participated.
-
-| No. | Full name | Registration number | GitHub username | Actual contribution |
-|---:|---|---|---|---|
-| 1 | ADD NAME | ADD NUMBER | ADD USERNAME | Dataset preparation and preprocessing |
-| 2 | ADD NAME | ADD NUMBER | ADD USERNAME | Model training and evaluation |
-| 3 | ADD NAME | ADD NUMBER | ADD USERNAME | Streamlit application development |
-| 4 | ADD NAME | ADD NUMBER | ADD USERNAME | GitHub and cloud deployment |
-| 5 | ADD NAME | ADD NUMBER | ADD USERNAME | Testing and documentation |
+| No. | Full Name | Registration Number | GitHub Username |
+|---:|---|---|---|
+| 1 | OBOT, EMEDIONG EDET | 22/EG/ME/1739 |  |
+| 2 | IFIOK, INOK EKAMBA | 22/EG/EE/2119 |  |
+| 3 | ONUNG, SIUKA SIUKA | 22/EG/ME/1789 |  |
+| 4 | INYANG, ANTHONY BASIL | 22/EG/ME/1709 |  |
+| 5 | UMOETUK, GODSFAVOUR VICTOR | 22/EG/ME/1719 |  |
+| 6 | KINGSLEY, DOMINUS BASSEY | 22/EG/ME/1749 |  |
+| 7 | OYOH, ABASIODIONG ANIEFIOK | 22/EG/ME/1699 |  |
+| 8 | EFFIOM, JEREMIAH OTU | 22/EG/ME/1829 |  |
+| 9 | GEORGE, SUNNY SUNDAY | 22/EG/ME/1759 |  |
+| 10 | UMOREN, SAMUEL UBAK | 22/EG/ME/1799 |  |
+| 11 | IKPE, PROMISE ALBERT | 22/EG/ME/1809 |  |
