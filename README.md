@@ -1,6 +1,6 @@
 # GET 324 Group 19: Leopard versus Tiger
 
-This rebuilt project completes Laboratory Exercise 10 with a trained binary
+This project completes Laboratory Exercise 10 with a trained binary
 image model and a wildlife-themed Streamlit interface called **WildSpot**.
 
 ## Main improvements
@@ -116,13 +116,3 @@ tiger, so an unsupported image can still receive one of those labels with high
 confidence. The uncertainty threshold helps only when the highest class score
 is low. A future production version should first use a separate validator to
 check whether a supported animal is present.
-
-## Submission completion
-
-Before submission:
-
-- Complete `CONTRIBUTORS.md`.
-- Insert the real links in `PROJECT_REPORT.md`.
-- Review `DISCUSSION_ANSWERS.md`.
-- Work through `SUBMISSION_CHECKLIST.md`.
-- Retain screenshots of the model results and deployed application.
