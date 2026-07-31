@@ -112,6 +112,20 @@ def inject_styles() -> None:
             font-size: .82rem;
         }
 
+        .stApp .stMarkdownContainer,
+        .stApp .stTextInput,
+        .stApp .stTextArea,
+        .stApp .stNumberInput,
+        .stApp .stSelectbox,
+        .stApp .stCheckbox,
+        .stApp .stRadio,
+        .stApp .stSlider,
+        .stApp .stFileUploader,
+        .stApp .stExpander,
+        .stApp .stAlert {
+            color: var(--forest) !important;
+        }
+
         .control-card,
         .result-card,
         .prob-card,
@@ -278,6 +292,21 @@ def predict_image(
     return label, confidence, tiger_probability
 
 
+def rerun_app() -> None:
+    """Trigger a page refresh using a Streamlit API available in this runtime."""
+    rerun = getattr(st, "rerun", None)
+    if callable(rerun):
+        rerun()
+        return
+
+    experimental_rerun = getattr(st, "experimental_rerun", None)
+    if callable(experimental_rerun):
+        experimental_rerun()
+        return
+
+    raise AttributeError("Streamlit does not expose a supported rerun API.")
+
+
 def render_sidebar(config: dict) -> tuple[float, float, bool]:
     """Display project info and interactive analysis controls."""
     with st.sidebar:
@@ -420,7 +449,7 @@ def main() -> None:
             use_container_width=True,
         )
         if st.button("Reset page", type="secondary", use_container_width=True):
-            st.experimental_rerun()
+            rerun_app()
 
     if not analyse:
         st.caption("No prediction has been made yet.")

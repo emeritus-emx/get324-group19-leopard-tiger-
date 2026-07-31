@@ -1,8 +1,14 @@
 """Small tests for preprocessing-independent application logic."""
 
+import sys
+from pathlib import Path
+
 import numpy as np
 from PIL import Image
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+import app
 from inference_utils import interpret_probability, prepare_image
 
 
@@ -27,3 +33,16 @@ def test_interpret_probability_returns_tiger_at_threshold():
     )
     assert label == "tiger"
     assert confidence == 0.50
+
+
+def test_rerun_app_uses_supported_rerun_api(monkeypatch):
+    called = {}
+
+    def fake_rerun():
+        called["value"] = True
+
+    monkeypatch.setattr(app.st, "rerun", fake_rerun)
+
+    app.rerun_app()
+
+    assert called["value"] is True
