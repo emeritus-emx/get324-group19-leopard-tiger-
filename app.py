@@ -510,8 +510,9 @@ def main() -> None:
             unsafe_allow_html=True,
         )
         st.markdown(
-            f"**Decision threshold:** {decision_threshold:.2f}  \\"
-            f"**Confidence threshold:** {minimum_confidence:.2f}"
+            f"<span style=\"color: #000000;\">Decision threshold: {decision_threshold:.2f}  "
+            f"Confidence threshold: {minimum_confidence:.2f}</span>",
+            unsafe_allow_html=True,
         )
         st.caption(
             "Use the sidebar sliders to explore how stricter or looser criteria "
