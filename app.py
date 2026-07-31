@@ -186,11 +186,16 @@ def inject_styles() -> None:
         }
 
         div[data-testid="stFileUploader"] {
-            background: none !important;
+            background-color: transparent !important;
             border: 1px solid rgba(16,35,27,.10);
             border-radius: 20px;
             padding: 1.1rem;
             box-shadow: 0 12px 35px rgba(16,35,27,.07);
+        }
+
+        div[data-testid="stFileUploader"] > div,
+        div[data-testid="stFileUploader"] section {
+            background-color: transparent !important;
         }
 
         /* Custom uploader icon and clearer visual affordance */
