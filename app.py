@@ -124,9 +124,13 @@ def inject_styles() -> None:
         .stApp .stExpander,
         .stApp .stAlert {
             color: var(--forest) !important;
-            background: rgba(255, 248, 232, 0.95) !important;
+            background: rgba(255, 248, 232, 0.96) !important;
             border-radius: 10px;
-            padding: 0.2rem 0.4rem;
+            padding: 0.35rem 0.5rem;
+        }
+
+        .stApp .stAlert {
+            border: 1px solid rgba(16, 35, 27, 0.14);
         }
 
         .control-card,
