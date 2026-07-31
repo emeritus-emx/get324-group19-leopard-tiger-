@@ -219,12 +219,12 @@ def inject_styles() -> None:
 
         /* Ensure uploader text and placeholder are visible in black */
         div[data-testid="stFileUploader"] * {
-            color: #3a311a1b !important;
+            color: #3a2008 !important;
         }
         div[data-testid="stFileUploader"] input,
         div[data-testid="stFileUploader"] span,
         div[data-testid="stFileUploader"] label {
-            color: #3a311a !important;
+            color: #3a2008 !important;
         }
 
         /* Hide the default small SVG upload icon to avoid visual clutter */
@@ -236,14 +236,14 @@ def inject_styles() -> None:
             min-height: 3.2rem;
             border: 0;
             border-radius: 14px;
-            color: #14251c;
+            color: #3a2008;
             font-weight: 800;
             background: linear-gradient(90deg, #f7c45d, #ee9e38);
             box-shadow: 0 10px 24px rgba(201,108,59,.20);
         }
 
         div.stButton > button:hover {
-            color: #14251c;
+            color: #3a2008;
             border: 0;
             transform: translateY(-1px);
         }
