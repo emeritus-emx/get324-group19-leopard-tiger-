@@ -328,8 +328,10 @@ def inject_styles() -> None:
             font-weight: 900;
             color: #10231b;
         }
-        st.subheader{
-        color: #3a2008;}
+        .analysis-review-heading {
+            color: #3a2008;
+            margin-top: 0;
+        }
 
         [data-testid="stSidebar"] {
             background: #10231b;
