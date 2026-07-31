@@ -338,6 +338,11 @@ def inject_styles() -> None:
             margin-top: 0;
         }
 
+        .upload-heading {
+            color: #3a2008 !important;
+            margin-top: 0;
+        }
+
         [data-testid="stSidebar"] {
             background: #10231b;
         }
@@ -516,7 +521,10 @@ def main() -> None:
 
     intro_left, intro_right = st.columns([1.35, 1], gap="large")
     with intro_left:
-        st.subheader("Upload observation")
+        st.markdown(
+            '<h2 class="upload-heading">Upload observation</h2>',
+            unsafe_allow_html=True,
+        )
         uploaded_file = st.file_uploader(
             "📤 Upload one wildlife image",
             type=["jpg", "jpeg", "png", "webp"],
@@ -525,7 +533,10 @@ def main() -> None:
         )
 
     with intro_right:
-        st.subheader("Analysis review")
+        st.markdown(
+            '<h2 class="analysis-review-heading">Analysis review</h2>',
+            unsafe_allow_html=True,
+        )
         st.markdown(
             "<span style=\"color: #3a2008;\">This app distinguishes only leopards and tigers. "
             "If your image contains another animal, the model will still choose its closest match.</span>",
