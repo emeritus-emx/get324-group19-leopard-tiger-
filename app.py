@@ -39,8 +39,9 @@ def inject_styles() -> None:
 
         .stApp {
             background:
-                radial-gradient(circle at 85% 8%, rgba(245,181,68,.14), transparent 26rem),
-                linear-gradient(180deg, #f9f5e9 0%, #fffdf7 55%, #eef3ed 100%);
+                linear-gradient(135deg, rgba(255,248,232,.80) 0%, rgba(255,248,232,.68) 50%, rgba(238,243,237,.75) 100%),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='1000' viewBox='0 0 1600 1000'%3E%3Crect width='1600' height='1000' fill='%2310231b'/%3E%3Cpath d='M240 780c90-190 220-320 370-390 102-48 234-76 306-48 77 29 130 97 165 176 33 74 44 164 32 248-12 77-49 153-110 208-62 56-139 77-225 77-170 0-329-75-472-210-36-34-70-74-93-120-13-25-16-52-10-77 7-34 22-60 47-74Z' fill='%23f5b544' fill-opacity='.25'/%3E%3Cpath d='M920 310c-60 0-110 44-128 101-19 61-5 130 32 182 47 66 124 100 214 96 98-4 179-54 223-137 31-58 41-125 24-187-15-57-56-101-111-124-53-23-116-25-171-2-38 16-62 43-83 71Z' fill='%23ef8b48' fill-opacity='.28'/%3E%3Cpath d='M640 420c80-28 167-39 255-37 76 2 150 17 214 50 63 33 111 84 137 148 27 67 29 144 13 214-18 77-63 148-132 195-68 46-154 70-243 69-92-1-183-25-262-76-70-45-123-115-144-195-24-94-5-196 53-274 26-34 60-57 99-74Z' fill='%23fff8e8' fill-opacity='.14'/%3E%3C/svg%3E") center/cover no-repeat;
+            background-attachment: fixed;
         }
 
         .block-container {
