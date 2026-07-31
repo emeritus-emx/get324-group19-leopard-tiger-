@@ -2,7 +2,7 @@
 
 | No. | Full Name | Registration Number | GitHub Username |
 |---:|---|---|---|
-| 1 | OBOT, EMEDIONG EDET | 22/EG/ME/1739 |  |
+| 1 | OBOT, EMEDIONG EDET | 22/EG/ME/1739 | emeritus-emx |
 | 2 | IFIOK, INOK EKAMBA | 22/EG/EE/2119 |  |
 | 3 | ONUNG, SIUKA SIUKA | 22/EG/ME/1789 | siukasiuka2076-hash |
 | 4 | INYANG, ANTHONY BASIL | 22/EG/ME/1709 |  |
