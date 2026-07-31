@@ -214,7 +214,7 @@ def inject_styles() -> None:
             opacity: 0.92;
             transform: translateY(-2px);
             pointer-events: none;
-            color: white;
+            color: #3a2008;
             background: transparent;
         }
 
@@ -518,12 +518,12 @@ def main() -> None:
     with intro_right:
         st.subheader("Analysis review")
         st.markdown(
-            "<span style=\"color: #000000;\">This app distinguishes only leopards and tigers. "
+            "<span style=\"color: #3a2008;\">This app distinguishes only leopards and tigers. "
             "If your image contains another animal, the model will still choose its closest match.</span>",
             unsafe_allow_html=True,
         )
         st.markdown(
-            f"<span style=\"color: #000000;\">Decision threshold: {decision_threshold:.2f}  "
+            f"<span style=\"color: #3a2008;\">Decision threshold: {decision_threshold:.2f}  "
             f"Confidence threshold: {minimum_confidence:.2f}</span>",
             unsafe_allow_html=True,
         )
