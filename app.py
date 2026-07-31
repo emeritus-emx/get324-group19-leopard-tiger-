@@ -201,10 +201,18 @@ def inject_styles() -> None:
         div[data-testid="stFileUploader"]::before {
             content: "🐾📤";
             display: block;
-            font-size: 2.8rem;
-            margin-bottom: 0.45rem;
-            opacity: 0.98;
+            font-size: 2.4rem;
+            margin-bottom: 0.28rem;
+            opacity: 0.92;
             transform: translateY(-2px);
+            pointer-events: none;
+            color: var(--amber);
+            background: transparent;
+        }
+
+        /* Ensure uploader text is visible (dark on light/gold background) */
+        div[data-testid="stFileUploader"] * {
+            color: var(--forest) !important;
         }
 
         /* Hide the default small SVG upload icon to avoid visual clutter */
