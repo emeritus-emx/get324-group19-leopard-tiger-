@@ -198,6 +198,13 @@ def inject_styles() -> None:
             text-align: center;
         }
 
+        div[data-testid="stFileUploader"] button {
+            background: linear-gradient(90deg, #f7c45d, #ee9e38) !important;
+            color: #10231b !important;
+            border: none !important;
+            box-shadow: 0 8px 20px rgba(201,108,59,.15) !important;
+        }
+
         div[data-testid="stFileUploader"]::before {
             content: "🐾📤";
             display: block;
