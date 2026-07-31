@@ -15,5 +15,5 @@ to reduce these problems. Future work should add an independent validator for
 rejecting images that contain neither animal.
 
 **Word count:** 138  
-**GitHub repository:** ADD_GITHUB_REPOSITORY_URL_HERE  
-**Streamlit application:** ADD_STREAMLIT_URL_HERE
+**GitHub repository:** (https://github.com/emeritus-emx/get324-group19-leopard-tiger-) 
+**Streamlit application:** [(https://group19-leopard-tiger.streamlit.app/)]
