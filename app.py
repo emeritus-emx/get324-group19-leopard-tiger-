@@ -106,7 +106,7 @@ def inject_styles() -> None:
 
         .status-pill {
             border: 1px solid rgba(255,255,255,.18);
-            background: rgba(255,255,255,.08);
+            background: none;
             border-radius: 999px;
             padding: .42rem .78rem;
             color: #edf4ef;
@@ -186,7 +186,7 @@ def inject_styles() -> None:
         }
 
         div[data-testid="stFileUploader"] {
-            background: rgba(255, 255, 255, 0.08) !important;
+            background: none !important;
             border: 1px solid rgba(16,35,27,.10);
             border-radius: 20px;
             padding: 1.1rem;
