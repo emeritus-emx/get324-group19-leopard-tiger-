@@ -201,7 +201,7 @@ def inject_styles() -> None:
 
         div[data-testid="stFileUploader"] button {
             background: linear-gradient(90deg, #f7c45d, #ee9e38) !important;
-            color: #3a2008 !important;
+            color: #10231b !important;
             border: none !important;
             box-shadow: 0 8px 20px rgba(201,108,59,.15) !important;
         }
@@ -214,8 +214,8 @@ def inject_styles() -> None:
             opacity: 0.92;
             transform: translateY(-2px);
             pointer-events: none;
-            color: #3a2008;
-            background: black;
+            color: white;
+            background: transparent;
         }
 
         /* Ensure uploader text and placeholder are visible in black */
