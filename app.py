@@ -191,6 +191,26 @@ def inject_styles() -> None:
             box-shadow: 0 12px 35px rgba(16,35,27,.07);
         }
 
+        /* Custom uploader icon and clearer visual affordance */
+        div[data-testid="stFileUploader"] {
+            position: relative;
+            text-align: center;
+        }
+
+        div[data-testid="stFileUploader"]::before {
+            content: "🐾📤";
+            display: block;
+            font-size: 2.8rem;
+            margin-bottom: 0.45rem;
+            opacity: 0.98;
+            transform: translateY(-2px);
+        }
+
+        /* Hide the default small SVG upload icon to avoid visual clutter */
+        div[data-testid="stFileUploader"] svg {
+            display: none !important;
+        }
+
         div.stButton > button {
             min-height: 3.2rem;
             border: 0;
@@ -239,6 +259,52 @@ def inject_styles() -> None:
             border-radius: 16px;
             background: rgba(255,255,255,.78);
             border: 1px solid rgba(16,35,27,.10);
+        }
+
+        /* Probability bar and confidence meter */
+        .prob-bar {
+            display: flex;
+            height: 2.2rem;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(16,35,27,.08);
+            background: rgba(255,255,255,.92);
+            margin-top: .6rem;
+        }
+
+        .prob-segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #10231b;
+            font-weight: 800;
+            font-size: .95rem;
+        }
+
+        .prob-segment.tiger { background: linear-gradient(90deg,#ef8b48,#f08a3a); }
+        .prob-segment.leopard { background: linear-gradient(90deg,#f5b544,#f7c45d); }
+
+        .confidence-meter {
+            height: .9rem;
+            border-radius: 8px;
+            background: rgba(16,35,27,.06);
+            overflow: hidden;
+            margin-top: .6rem;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg,#8fd19a,#2e8f5a);
+        }
+
+        .result-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .45rem .8rem;
+            border-radius: 999px;
+            font-weight: 900;
+            color: #10231b;
         }
 
         [data-testid="stSidebar"] {
@@ -332,33 +398,46 @@ def render_sidebar(config: dict) -> tuple[float, float, bool]:
 
         st.divider()
         st.markdown("### Analysis controls")
+        st.caption("Adjust criteria used for the final classification.")
+        default_threshold = min(max(float(config.get("threshold", 0.50)), 0.20), 0.80)
         decision_threshold = st.slider(
-            "Decision threshold",
+            "Decision threshold (tiger probability)",
             min_value=0.20,
             max_value=0.80,
-            value=min(max(float(config.get("threshold", 0.50)), 0.20), 0.80),
+            value=default_threshold,
             step=0.01,
             help=(
                 "Adjust the decision boundary used to classify leopard vs tiger. "
-                "A higher threshold makes tiger predictions more conservative."
+                "Higher values make tiger predictions more conservative."
             ),
+            key="decision_threshold",
         )
         minimum_confidence = st.slider(
-            "Uncertainty confidence",
+            "Minimum confidence (require definitive result)",
             min_value=0.50,
             max_value=0.95,
-            value=float(config.get("minimum_confidence", 0.80)),
+            value=min(max(float(config.get("minimum_confidence", 0.80)), 0.50), 0.95),
             step=0.01,
             help=(
-                "Raise this slider to require stronger model confidence before "
-                "the app reports a definitive result."
+                "Set the minimum model confidence required to show a definitive label. "
+                "Lower values accept more uncertain predictions."
             ),
+            key="minimum_confidence",
         )
-        show_raw_scores = st.checkbox(
-            "Show raw model scores",
-            value=False,
-            help="Reveal the underlying tiger and leopard probability values.",
-        )
+
+        with st.expander("Advanced options", expanded=False):
+            show_raw_scores = st.checkbox(
+                "Show raw model scores",
+                value=False,
+                help="Reveal the underlying tiger and leopard probability values.",
+                key="show_raw_scores",
+            )
+
+            if st.button("Reset controls"):
+                st.session_state["decision_threshold"] = float(config.get("threshold", 0.5))
+                st.session_state["minimum_confidence"] = float(config.get("minimum_confidence", 0.8))
+                st.session_state["show_raw_scores"] = False
+                rerun_app()
 
         st.divider()
         st.markdown("### Model notes")
@@ -408,10 +487,10 @@ def main() -> None:
     with intro_left:
         st.subheader("Upload observation")
         uploaded_file = st.file_uploader(
-            "Choose one wildlife image",
+            "📤 Upload one wildlife image",
             type=["jpg", "jpeg", "png", "webp"],
             help="Upload a clear image containing one leopard or tiger.",
-            label_visibility="collapsed",
+            label_visibility="visible",
         )
 
     with intro_right:
@@ -507,35 +586,45 @@ def main() -> None:
                 unsafe_allow_html=True,
             )
 
+        # Render a compact decision summary with a horizontal probability bar
         st.markdown(
             f"""
             <div class="prob-card">
-                <b>Model decision</b><br>
-                <span class="detail-text">Threshold</span>
-                <div class="detail-value">{decision_threshold:.2f}</div>
+                <b>Model decision</b>
+                <div class="detail-text">Decision threshold: {decision_threshold:.2f}</div>
+                <div class="prob-bar" role="img" aria-label="Probability bar">
+                    <div class="prob-segment tiger" style="width: {tiger_probability * 100:.2f}%;">{tiger_probability * 100:.0f}%</div>
+                    <div class="prob-segment leopard" style="width: {leopard_probability * 100:.2f}%;">{leopard_probability * 100:.0f}%</div>
+                </div>
+                <div class="detail-text" style="margin-top:.5rem">Model confidence: {confidence * 100:.2f}%</div>
+                <div class="confidence-meter">
+                    <div class="confidence-fill" style="width: {min(max(confidence, 0.0), 1.0) * 100:.2f}%;"></div>
+                </div>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
     with details_section:
+        # Detailed numeric badges and short explanations
         st.markdown(
             f"""
             <div class="result-summary">
-                <div><strong>Tiger probability</strong></div>
-                <div class="summary-badge tiger">{tiger_probability * 100:.2f}%</div>
-                <div class="detail-text">Raw sigmoid output from the model.</div>
-            </div>
-            <div class="result-summary">
-                <div><strong>Leopard probability</strong></div>
-                <div class="summary-badge leopard">{leopard_probability * 100:.2f}%</div>
-                <div class="detail-text">Complementary probability value.</div>
+                <div style="display:flex; gap:1rem; align-items:center;">
+                    <div>
+                        <div><strong>Tiger</strong></div>
+                        <div class="summary-badge tiger">{tiger_probability * 100:.2f}%</div>
+                    </div>
+                    <div>
+                        <div><strong>Leopard</strong></div>
+                        <div class="summary-badge leopard">{leopard_probability * 100:.2f}%</div>
+                    </div>
+                </div>
+                <div class="detail-text">Raw model output and complementary value.</div>
             </div>
             """,
             unsafe_allow_html=True,
         )
-        st.progress(int(round(tiger_probability * 100)))
-        st.progress(int(round(leopard_probability * 100)))
 
     if show_raw_scores:
         with st.expander("Raw model scores and thresholds", expanded=True):
