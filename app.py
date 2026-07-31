@@ -124,7 +124,8 @@ def inject_styles() -> None:
         .stApp .stExpander,
         .stApp .stAlert {
             color: var(--forest) !important;
-            background: rgba(255, 248, 232, 0.96) !important;
+            /* Soft gold background for analysis controls */
+            background: rgba(245, 181, 68, 0.12) !important;
             border-radius: 10px;
             padding: 0.35rem 0.5rem;
         }
