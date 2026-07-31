@@ -217,9 +217,14 @@ def inject_styles() -> None:
             background: transparent;
         }
 
-        /* Ensure uploader text is visible (dark on light/gold background) */
+        /* Ensure uploader text and placeholder are visible in black */
         div[data-testid="stFileUploader"] * {
-            color: white !important;
+            color: #10231b !important;
+        }
+        div[data-testid="stFileUploader"] input,
+        div[data-testid="stFileUploader"] span,
+        div[data-testid="stFileUploader"] label {
+            color: #10231b !important;
         }
 
         /* Hide the default small SVG upload icon to avoid visual clutter */
