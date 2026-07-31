@@ -186,7 +186,7 @@ def inject_styles() -> None:
         }
 
         div[data-testid="stFileUploader"] {
-            background: rgba(255,255,255,.82);
+            background: rgba(255, 255, 255, 0.08) !important;
             border: 1px solid rgba(16,35,27,.10);
             border-radius: 20px;
             padding: 1.1rem;
