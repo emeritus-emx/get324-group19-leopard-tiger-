@@ -219,12 +219,12 @@ def inject_styles() -> None:
 
         /* Ensure uploader text and placeholder are visible in black */
         div[data-testid="stFileUploader"] * {
-            color: #10231b !important;
+            color: #3a311a1b !important;
         }
         div[data-testid="stFileUploader"] input,
         div[data-testid="stFileUploader"] span,
         div[data-testid="stFileUploader"] label {
-            color: #10231b !important;
+            color: #3a311a !important;
         }
 
         /* Hide the default small SVG upload icon to avoid visual clutter */
