@@ -328,6 +328,8 @@ def inject_styles() -> None:
             font-weight: 900;
             color: #10231b;
         }
+        st.subheader{
+        color: #3a2008;}
 
         [data-testid="stSidebar"] {
             background: #10231b;
@@ -517,10 +519,6 @@ def main() -> None:
 
     with intro_right:
         st.subheader("Analysis review")
-        st.markdown(
-            '<h2 style="color: #3a2008; margin-top: 0;">Analysis review</h2>',
-            unsafe_allow_html=True,
-        )
         st.markdown(
             "<span style=\"color: #3a2008;\">This app distinguishes only leopards and tigers. "
             "If your image contains another animal, the model will still choose its closest match.</span>",
