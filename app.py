@@ -74,7 +74,7 @@ def inject_styles() -> None:
         }
 
         .eyebrow {
-            color: var(--amber);
+            color: white;
             font-size: .78rem;
             font-weight: 800;
             letter-spacing: .16em;
@@ -212,7 +212,7 @@ def inject_styles() -> None:
 
         /* Ensure uploader text is visible (dark on light/gold background) */
         div[data-testid="stFileUploader"] * {
-            color: var(--forest) !important;
+            color: white !important;
         }
 
         /* Hide the default small SVG upload icon to avoid visual clutter */
