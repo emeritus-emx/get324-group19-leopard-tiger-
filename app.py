@@ -548,8 +548,9 @@ def main() -> None:
             unsafe_allow_html=True,
         )
         st.caption(
-            "Use the sidebar sliders to explore how stricter or looser criteria "
-            "affect the final classification."
+            '<span style="color: #3a2008;">Use the sidebar sliders to explore how stricter or looser criteria '
+            'affect the final classification.</span>',
+            unsafe_allow_html=True,
         )
 
     if uploaded_file is None:
