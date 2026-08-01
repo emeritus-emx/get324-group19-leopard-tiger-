@@ -534,7 +534,7 @@ def main() -> None:
 
     with intro_right:
         st.markdown(
-            '<h2 class= style="color: #3a2008;">Analysis review</h2>',
+            '<h2 class= style=\"color: #3a2008;\">Analysis review</h2>',
             unsafe_allow_html=True,
         )
         st.markdown(
