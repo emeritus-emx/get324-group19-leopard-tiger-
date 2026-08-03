@@ -116,3 +116,6 @@ tiger, so an unsupported image can still receive one of those labels with high
 confidence. The uncertainty threshold helps only when the highest class score
 is low. A future production version should first use a separate validator to
 check whether a supported animal is present.
+
+get324-group19-leopard-tiger
+
