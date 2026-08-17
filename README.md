@@ -119,3 +119,9 @@ check whether a supported animal is present.
 
 get324-group19-leopard-tiger
 
+
+## Authors
+
+This project was developed by **GET 324 Group 19** (Mechanical Engineering, University of Uyo) as part of Laboratory Exercise 10 on Machine Learning and Cloud Deployment.
+
+See `CONTRIBUTORS.md` for the complete list of team members and their GitHub usernames.
